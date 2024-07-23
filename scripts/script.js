@@ -1,5 +1,28 @@
 // - temp <3
 
+let waitingForFirstPress = true;
+
+// enables music with user interaction or click
+window.addEventListener("keydown", function (event) { 
+  if (waitingForFirstPress) {
+    toggleMusic = 2; 
+    updateMusicIcon(); 
+    console.log(event.code); 
+    event.preventDefault(); // dunno why but this just makes it work lol
+    waitingForFirstPress = false;
+  }
+});
+
+window.addEventListener("click", function (event) { 
+  if (waitingForFirstPress) {
+    toggleMusic = 2; 
+    updateMusicIcon(); 
+    console.log(event.code); 
+    event.preventDefault(); // dunno why but this just makes it work lol
+    waitingForFirstPress = false;
+  }
+});
+
 let otherIndex = 0;
 let abletoswipe = true;
 let canNavigate = true;
@@ -382,6 +405,7 @@ function updateMusicIcon() {
 // colors and index
 const video = document.querySelector("#bgvid");
 const index = document.getElementById("indeximg");
+const portfolio = document.getElementById("vid");
 const nav = document.querySelectorAll(".nav-button");
 const filterValues = [0, 60, 130, 210, 300];
 const NavFilterValues = [0, 40, 150, 210, 275];
@@ -389,6 +413,13 @@ let wrap = 0;
 
 function changeIndex(index) {
   document.getElementById("indeximg").src = "images/index" + (index+1) + ".webp";
+
+  // if the index is 3, the portfolio video should play
+  if (index === 2) {
+    portfolio.play();
+  } else {
+    portfolio.pause();
+  }
   const filterValue = video.style.filter;
   const match = filterValue.match(/hue-rotate\(([-\d]+)deg\)/);
   let filterDeg;
@@ -451,3 +482,38 @@ function changeIcons() {
     music1 = "images/music1.webp";
     music2 = "images/music2.webp";
 }
+
+// NEW: if the mouse is still for a while, index, btn-group and nav buttons opacity = 0
+const navButtons = document.querySelectorAll(".nav-button");
+
+function Idle() {
+  index.style.opacity = 0;
+  navButtons.forEach(button => {
+    if (button !== youtube && button !== discord && button !== twitter && button !== twitch) {
+      button.style.opacity = 0;
+    }
+  });
+}
+
+function showContent() {
+  index.style.opacity = 1;
+  navButtons.forEach(button => {
+      button.style.opacity = 1;
+  });
+}
+
+let timeout;
+const idleTime = 1000;
+
+function handleMouseMove() {
+    clearTimeout(timeout);
+    showContent();
+    timeout = setTimeout(() => {
+      Idle();
+    }, idleTime);
+}
+
+
+document.addEventListener('mousemove', handleMouseMove);
+
+handleMouseMove();
